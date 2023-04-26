@@ -1,0 +1,57 @@
+A)Nearest neighbor analysis.
+Given the locations of all known significant earthquakes places, we need to find out the nearest 
+populated place for each location where the earthquake happened.
+Required dataset:
+ne_10m_populated_places_simple signif.txt
+Required plugin:
+MMQGIS
+1.Add delimited text layer “signif.txt”
+2.Choose Tab as format, X and Y field will be auto populated. Click Ok. Select WGS 84 as CRS.
+3.Now add vector layer “ne_10m_populated_places_simple.shp”
+4.Zoom and observe both the layer carefully. Each purple and blue point represents location of significant 
+earthquake and populated places respectively. We need to find out nearest point from populated places layer for
+ each of the point in earthquake layer.
+5.Go to vector  analysis tools  distance matrix.
+6.On next screen select signif layer as input layer and ne_10m_populated_places_simple as target layer. We need
+ to select a unique field from each of these layers which is how our results will be displayed. Select name as target
+ unique ID field. Here, we are looking to get only 1 nearest point so we will check Use only the nearest(k) target point, 
+and enter 1. Specify location for output file and give name of output file as “matrix.csv”, click on ok. After processing 
+click on close.
+7.Add this file as delimited text layer.
+8.On next screen, since the file created just now is csv file contains only text therefore select No geometry as geometry
+ definition. And click on Ok.
+9.This file is loaded as table. Right click on this layer in layer pane and click on open attribute tables.
+10.The InputID field contains the field name from the Earthquake layer and The TargetID field contains the name of the 
+feature from the Populated Places layer that was the closest to the earthquake point. The Distance field is the distance between
+ the 2 points. (distance is calculated in decimal degrees units as the project is having default Geographic CRS).
+11.This table would be sufficient. However, we can also integrate this result in our original Earthquake layer using a 
+“Table Join”. Double click on Earthquake layer, Properties window will get open.
+12.Go to the Joins tab and click on the + button.
+13.Select matrix as the Join layer and InputID (matrix) as the Join field. The Target field would be I_D (signif). Click on OK.
+ Join will appear in property window, now click on Ok.
+14.Now right click on signif and click on open attribute table.
+15.We will see that for every Earthquake feature, we now have an attribute which is the nearest neighbor (closest populated place)
+ and the distance to the nearest neighbor.
+16.Now to visualize these results. First, we need to make the table join permanent by saving it to a new layer. Right-click the 
+signif layer and select Save As....
+17.Select format as ESRI Shapefile, select location and give name as “earthquake_with_places.shp” for this file. Click on change 
+button to select CRS and select WGS 84, click on Ok. Check add saved file to map and click on Ok.
+18.Now we can uncheck original signif layer as we are not going to use it further.
+19.Double click on earthquake_with_places layer to open property window.
+20.Select general tab and scroll down and click on query builder button.
+21.For this tutorial, we will visualize the earthquakes and their nearest populated places for India. Enter the following expression
+ in the Query Builder dialog box.
+22.We will see that only the points falling within India will be visible in the canvas. Let’s do the same for the populated places layer.
+ Double click on
+   the ne_10m_populated_places_simple layer to open property window.
+23.Open query builder dialog box and enter the following expression. And click on Ok on property window.
+24.Now we are ready to create our visualization, but we will require a plugin “MMQGIS”. So, we need to make sure that the plugin is installed.
+ Go to MMQGIS  Create  Hub Lines.
+25.Select ne_10m_populated_places_simple as the Hub Point Layer and name as the Hub ID Attribute. Similarly, select earthquake_with_places as
+ the Spoke Point Layer and matrix_Tar as the Spoke Hub ID Attribute. The hub lines algorithm will go through each of earthquake points and create
+ a line that will join it to the populated place which matches the attribute we have specified. Click Browse and name the Output Shapefile as
+ earthquake_hub_lines.shp and Click on OK to start the processing.
+26.It may take few minutes. Once the processing is done, we will see the
+earthquake_hub_lines layer loaded in QGIS. We can see that each earthquake point now has a line that connects it to the nearest populated place.
+ 
+
